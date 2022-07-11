@@ -21,7 +21,7 @@ async function init(){
                 console.log("init >> get transaction details >> error >> ", transactionDetails);
                 continue;
             }
-            const transactionsSchema = new TRANSACTIONS({
+            let saveTransactionPayload = {
                 transactionHash: transactionDetails.hash,
                 from: transactionDetails.from,
                 to: transactionDetails.to,
@@ -29,8 +29,8 @@ async function init(){
                 timestamp: blockDetails.timestamp,
                 blockHash: transactionDetails.blockHash,
                 blockNumber: transactionDetails.blockNumber
-            });
-            let savedTransactionDetails = await transactionsSchema.save().then().catch(error => error);
+            };
+            let savedTransactionDetails = await saveTransactionDetails(saveTransactionPayload).then(savedTransactionDetails => savedTransactionDetails).catch(error => error);
             if(savedTransactionDetails instanceof Error) {
                 // console.log("init >> saving transaction details >> error >> ", savedTransactionDetails);
                 continue;
@@ -61,6 +61,19 @@ function getTransactionDetails(payload){
             });
         }catch(error){
             console.log("getTransactionDetails >> error >> ", error);
+            return reject(error);
+        }
+    })
+}
+
+function saveTransactionDetails(payload){
+    return new Promise(async (resolve, reject) => {
+        try{
+            const transactionsSchema = new TRANSACTIONS(payload);
+            let savedTransactionDetails = await transactionsSchema.save().then(savedTransactionDetails => savedTransactionDetails).catch(error => error);
+            return resolve(savedTransactionDetails);
+        }catch(error){
+            console.log("saveTransactionDetails >> error >> ", error);
             return reject(error);
         }
     })
