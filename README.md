@@ -9,7 +9,7 @@
 npm i 
 ```
 
-- Rename `.env.sample` file to `.env` file.
+- Create `.env` file from `.env.sample` file.
 
 - Enter following command to execute script:
 ```sh
